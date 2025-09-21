@@ -4,6 +4,18 @@ This repository contains a lightweight demo of a SecOps / threat-hunting
 pipeline implemented as a sequence of agents (collector, intel, hypothesis,
 query builder, detector, correlator, responder) connected via **LangGraph**.
 
+The code is modular and orchestrates the sequence of agents to transform raw telemetry into
+actionable incidents. 
+
+The demo supports synthetic data runs and a websocket
+telemetry stream, centralizes secrets in a `.env` file, and provides
+lightweight Docker Compose files. 
+
+The core is designed for clarity and extensibility: components include CTI enrichment, query compilation, alert
+scoring, incident correlation, and SOAR invocation, with an LLM-backed
+augmentation layer that falls back to deterministic simulated responses when
+no API key is present.
+
 ## Getting started 
 
 1. Create a Python virtual environment and install requirements:
