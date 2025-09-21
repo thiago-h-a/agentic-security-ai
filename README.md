@@ -21,6 +21,5 @@ use deterministic simulated LLM responses.
 3. Run the AI demo:
 
 ```bash
-python patches.py      # ensures demo files exist
-bash demo/run_demo_ai.sh
+python demo_ai.py
 ```
