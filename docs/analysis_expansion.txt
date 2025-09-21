@@ -1,0 +1,34 @@
+Project expansion analysis and recommended next steps:
+
+1) Unit tests: Create pytest suites for each agent verifying behavior with
+   synthetic inputs (happy path, malformed inputs, and exception paths). Use
+   fixtures to mock external tools (fetch_feed, run_query, perform_action) and
+   LangChain responses. Target 80-90% coverage for core logic.
+
+2) Circuit-breakers: Introduce resilience patterns for external calls
+   (CTI feed, Elasticsearch, SOAR) with exponential backoff and open-circuit
+   semantics when repeated failures are observed.
+
+3) Hallucination checks: Add structured output constraints on LLM responses
+   (JSON schemas) and validate outputs; compare LLM claims against trusted
+   data (CTI, logs) and surface confidence scores.
+
+4) Performance & Latency: Benchmark agents end-to-end using realistic event
+   rates; instrument histograms and percentiles. Consider batching and
+   parallelism for high-throughput ingestion.
+
+5) Cost: For LLM usage, pick low-cost models for non-critical tasks
+   (e.g. `gpt-3.5-turbo`) and reserve larger models for summarization only.
+   Implement caching for repeated prompts to reduce token usage.
+
+6) Metrics: Export counters and histograms to Prometheus or another TSDB.
+   Add dashboards for per-agent latency, errors, and resource utilization.
+
+7) Observability: Add structured logs, correlation ids, and tracing spans to
+   propagate context across agents and external calls.
+
+8) Security: Securely store secrets using a vault; avoid committing `.env` to
+   source control. Harden HTTP clients and validate external responses.
+
+This roadmap will help move the demo toward a production-ready prototype with
+reliability, testability, and cost-awareness.

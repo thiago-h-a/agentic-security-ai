@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+
+# Developer
+to_do.txt
+patches.py
+.concat
+
+# Virtual env
+.env
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+*.log
+*.pid
+*.sock
+*.tmp
+
+# Byte-compiled
+*.egg-info/
+*.egg
+*.manifest
+*.spec
+
+# Demo artifacts
+demo/__pycache__/
+
+# Project exclude paths
+/.venv/

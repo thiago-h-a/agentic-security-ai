@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  secops-demo-ai:
+    image: python:3.11-slim
+    container_name: secops_demo_ai
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: bash -c "pip install -r requirements.txt || true; python demo/demo_ai.py"
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports: []

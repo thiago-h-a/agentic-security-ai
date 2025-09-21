@@ -1,0 +1,10 @@
+SecOps-Graph is a modular, educational threat-hunting pipeline that
+orchestrates a sequence of agents — collector, intel, hypothesis, query
+builder, detector, correlator, and responder — to transform raw telemetry into
+actionable incidents. The demo supports synthetic data runs and a websocket
+telemetry stream, centralizes secrets in a `.env` file, and provides
+lightweight Docker Compose files. The core is designed for clarity and
+extensibility: components include CTI enrichment, query compilation, alert
+scoring, incident correlation, and SOAR invocation, with an LLM-backed
+augmentation layer that falls back to deterministic simulated responses when
+no API key is present.
