@@ -17,10 +17,10 @@ from typing import Any, Dict, List, Sequence
 
 from langgraph.types import Command
 
-from app import cache, metrics, to_json_safe
-from app import get_config
-from app import embedder, safe_ask_llm
-from app import fetch_feed  # uses existing tools module
+from fastAPI import cache, metrics, to_json_safe
+from fastAPI import get_config
+from fastAPI import embedder, safe_ask_llm
+from fastAPI import fetch_feed  # uses existing tools module
 
 logger = logging.getLogger(__name__)
 

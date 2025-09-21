@@ -9,7 +9,7 @@ from typing import Any, Dict, List
 from pydantic import BaseModel, Field, ValidationError
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from app.config import get_env
+from fastAPI.config import get_env
 
 logger = logging.getLogger(__name__)
 

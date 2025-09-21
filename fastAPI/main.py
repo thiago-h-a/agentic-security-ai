@@ -1,5 +1,5 @@
 """
-FastAPI app exposing endpoints to run the SecOps hunt pipeline.
+FastAPI fastAPI exposing endpoints to run the SecOps hunt pipeline.
 
 Endpoints:
  - POST /run   -> run a hunt with provided messages (list of {"event": ...})
@@ -13,7 +13,7 @@ from typing import Any, Dict, List
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from app import hunt_graph, HuntState
+from fastAPI import hunt_graph, HuntState
 
 logger = logging.getLogger("team_agents.api")
 app = FastAPI(title="SecOps Graph API", version="0.1.0")
@@ -46,4 +46,4 @@ def run_hunt(req: RunRequest):
 # Allow running directly for development (uvicorn recommended for production)
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("team_agents.api:app", host="0.0.0.0", port=8000, reload=False)
+    uvicorn.run("team_agents.api:fastAPI", host="0.0.0.0", port=8000, reload=False)

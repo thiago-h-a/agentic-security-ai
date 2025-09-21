@@ -10,7 +10,7 @@ import httpx
 from pydantic import BaseModel, Field, ValidationError
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from app.config import get_env, get_httpx_client
+from fastAPI.config import get_env, get_httpx_client
 
 logger = logging.getLogger(__name__)
 

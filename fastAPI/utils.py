@@ -1,7 +1,7 @@
-# File: app/utils.py
+# File: fastAPI/utils.py
 """
-Compatibility utilities provided at the app package level so team_agents can import
-shared helpers via `from app import ...`.
+Compatibility utilities provided at the fastAPI package level so team_agents can import
+shared helpers via `from fastAPI import ...`.
 
 This module wraps or re-exports a small, test-friendly set of helpers the team_agents
 

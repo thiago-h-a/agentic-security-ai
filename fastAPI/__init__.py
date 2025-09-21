@@ -1,9 +1,9 @@
-# File: app/__init__.py
+# File: fastAPI/__init__.py
 """
-app package exports.
+fastAPI package exports.
 
 This module re-exports convenient utilities used across the project so that
-agent modules (and tests) can import common helpers via `from app import ...`.
+agent modules (and tests) can import common helpers via `from fastAPI import ...`.
 
 It also preserves the previous re-export of the web application and hunt_graph
 if those modules are available in the repository.
@@ -24,7 +24,7 @@ from .utils import (  # noqa: F401
 )
 
 from team_agents.core.graph import hunt_graph, HuntState
-from app.main import app as fastapi_app
+from fastAPI.main import app as fastapi_app
 
 __all__ = [
     "cache",
