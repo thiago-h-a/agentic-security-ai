@@ -1,10 +1,10 @@
-# SecOps Graph Demo
+# SecOps
 
 This repository contains a lightweight demo of a SecOps / threat-hunting
 pipeline implemented as a sequence of agents (collector, intel, hypothesis,
 query builder, detector, correlator, responder) connected via **LangGraph**.
 
-## Getting started (local, minimal)
+## Getting started 
 
 1. Create a Python virtual environment and install requirements:
 
