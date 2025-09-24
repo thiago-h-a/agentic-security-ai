@@ -18,8 +18,8 @@ from typing import Any, Dict, List
 
 from langgraph.types import Command
 
-from fastAPI import safe_ask_llm
-from fastAPI import metrics, to_json_safe
+from fastAPI.utils import safe_ask_llm
+from fastAPI.utils import metrics, to_json_safe
 
 logger = logging.getLogger(__name__)
 

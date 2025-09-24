@@ -18,8 +18,8 @@ from langgraph.types import Command
 
 from pydantic import BaseModel, Field, ValidationError
 
-from fastAPI import get_config
-from fastAPI import metrics
+from fastAPI.utils import get_config
+from fastAPI.utils import metrics
 
 logger = logging.getLogger(__name__)
 

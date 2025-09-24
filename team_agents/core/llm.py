@@ -22,7 +22,7 @@ OPENAI_LLM_DEFAULT_EMBEDDING_MODEL = settings.openai_llm_default_embedding_model
 logger = logging.getLogger(__name__)
 
 # LangChain modern imports
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage
 from langchain_openai import OpenAIEmbeddings
 LANGCHAIN_AVAILABLE = True

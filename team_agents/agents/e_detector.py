@@ -19,9 +19,10 @@ from langgraph.graph import END
 
 from pydantic import BaseModel, Field
 
-from fastAPI import metrics
-from fastAPI import safe_ask_llm
-from fastAPI import run_query, ESQLQuery
+from fastAPI.utils import metrics
+from fastAPI.utils import safe_ask_llm
+from fastAPI.utils import run_query
+from team_agents.tools.elastic_esql import ESQLQuery
 
 logger = logging.getLogger(__name__)
 

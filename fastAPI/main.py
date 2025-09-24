@@ -13,7 +13,7 @@ from typing import Any, Dict, List
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from fastAPI import hunt_graph, HuntState
+from team_agents.core.graph import hunt_graph, HuntState
 
 logger = logging.getLogger("team_agents.api")
 app = FastAPI(title="SecOps Graph API", version="0.1.0")

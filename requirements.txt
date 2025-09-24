@@ -8,3 +8,4 @@ langgraph~=0.6.7
 elasticsearch~=9.1.1
 tenacity~=9.1.2
 langchain-openai~=0.3.33
+pydantic-settings~=2.11.0

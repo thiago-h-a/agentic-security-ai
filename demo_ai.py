@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import asyncio
-from team_agents.core.graph import hunt_graph, HuntState
+from fastAPI import hunt_graph, HuntState
 
 CASES = []
 
