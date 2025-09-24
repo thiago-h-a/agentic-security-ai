@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  secops-stream:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: secops-stream-1
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PORT=8000
+    ports:
+      - '8000:8000'
+    volumes:
+      - .:/app
+    command: python demo_stream_api.py
+    restart: unless-stopped

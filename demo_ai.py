@@ -1,85 +1,121 @@
 #!/usr/bin/env python3
 import asyncio
-from fastAPI import hunt_graph, HuntState
+import random
+import time
+from fastAPI import HuntState, hunt_graph
 
-CASES = []
+# --- Mock realistic messages for each step ---
+COLLECTOR_OUTCOMES = [
+    "Normalized 2 SMB events from workstation-12",
+    "Collected 3 login anomalies from web01",
+    "Parsed 1 suspicious PowerShell execution",
+    "No suspicious events found in current logs"
+]
 
-# 2 cases with histories
-CASES.append(HuntState(messages=[
-    {"role": "system", "content": "Previous hunt context with lateral movement suspicion"},
-    {"role": "user", "content": "Analyst noted unusual SMB traffic"},
-    {"role": "assistant", "content": "Recommend checking workstation logins"}
-], evidence={}, alerts=[], story=None))
+INTEL_OUTCOMES = [
+    "Matched IP 203.0.113.77 with known C2 infrastructure",
+    "Enriched PowerShell command with MITRE ATT&CK T1059.001",
+    "Domain suspicious.example.com linked to phishing campaign",
+    "No CTI match found for given evidence"
+]
 
-CASES.append(HuntState(messages=[
-    {"role": "user", "content": "Suspicious login from foreign IP"},
-    {"role": "assistant", "content": "Suggested checking MFA logs"},
-    {"role": "system", "content": "Context: previous brute-force alerts on same account"}
-], evidence={}, alerts=[], story=None))
+HYPOTHESIS_OUTCOMES = [
+    "Possible lateral movement via SMB",
+    "Potential exfiltration from db02",
+    "Suspicion of ransomware on fileserver-01",
+    "Unlikely benign scheduled task"
+]
 
-# 2-4 cases with key evidences
-CASES.append(HuntState(messages=[
-    {"role": "user", "content": "Strange PowerShell activity detected on host"},
-    {"role": "assistant", "content": "Investigating process tree..."}
-], evidence={"process": "powershell.exe -EncodedCommand", "host": "workstation-22"}, alerts=[], story=None))
+QUERY_BUILDER_OUTCOMES = [
+    "Compiled query: FROM logs WHERE event_type='SMB' AND failed_logins > 5",
+    "Compiled query: FROM dns WHERE domain='suspicious.example.com'",
+    "Compiled query: FROM process WHERE command LIKE '%powershell.exe -enc%'",
+    "Compiled query: FROM auth WHERE country NOT IN ['US','CA']"
+]
 
-CASES.append(HuntState(messages=[
-    {"role": "system", "content": "Malware signature match on uploaded file"},
-    {"role": "assistant", "content": "Hash corresponds to known Trojan"}
-], evidence={"file_hash": "abcd1234", "file_path": "/tmp/malicious.exe", "signature": "Trojan.Generic"}, alerts=[], story=None))
+DETECTOR_OUTCOMES = [
+    "Alert: Multiple failed logins detected on SSH",
+    "Alert: Suspicious outbound DNS spike",
+    "Alert: Registry persistence created",
+    "No alerts detected"
+]
 
-CASES.append(HuntState(messages=[
-    {"role": "user", "content": "Unusual outbound DNS traffic"},
-    {"role": "system", "content": "Spike observed after business hours"}
-], evidence={"domain": "suspicious.example.com", "queries": 150, "timeframe": "02:00-03:00"}, alerts=[], story=None))
+CORRELATOR_OUTCOMES = [
+    "Correlated SSH brute force with MFA bypass attempt",
+    "Correlated DNS exfiltration with PowerShell execution",
+    "Single alert only, no correlation",
+    "No alerts to correlate"
+]
 
-CASES.append(HuntState(messages=[
-    {"role": "assistant", "content": "Reviewing firewall logs"},
-    {"role": "user", "content": "Found repeated connections to rare IPs"}
-], evidence={"ip_address": "203.0.113.77", "connection_count": 45}, alerts=[], story=None))
+RESPONDER_OUTCOMES = [
+    "Isolated workstation-22 from network",
+    "Disabled compromised account db02-user",
+    "Blocked outbound traffic to 203.0.113.77",
+    "No response actions taken"
+]
 
-# 6 cases with structured alerts
-CASES.append(HuntState(messages=[{"role": "system", "content": "Alert: Brute force attempt detected on SSH"}], evidence={}, alerts=[{
-    "evidence": {"host": "web01", "indicator": "SSH brute force", "meta": {"ip": "203.0.113.42"}}
-}], story=None))
 
-CASES.append(HuntState(messages=[{"role": "user", "content": "High volume of outbound data exfiltration"}], evidence={}, alerts=[{
-    "evidence": {"host": "db02", "indicator": "Exfiltration", "meta": {"bytes": 500000000}}
-}], story=None))
+# --- Define realistic demo cases ---
+CASES = [
+    HuntState(messages=[
+        {"role": "system", "content": "Previous hunt context with lateral movement suspicion"},
+        {"role": "user", "content": "Analyst noted unusual SMB traffic"},
+        {"role": "assistant", "content": "Recommend checking workstation logins"}
+    ], evidence={}, alerts=[], story=None),
+    HuntState(messages=[
+        {"role": "user", "content": "Suspicious login from foreign IP"},
+        {"role": "assistant", "content": "Suggested checking MFA logs"},
+        {"role": "system", "content": "Context: previous brute-force alerts on same account"}
+    ], evidence={}, alerts=[], story=None),
+    HuntState(messages=[
+        {"role": "user", "content": "Strange PowerShell activity detected on host"},
+        {"role": "assistant", "content": "Investigating process tree..."}
+    ], evidence={"process": "powershell.exe -EncodedCommand", "host": "workstation-22"}, alerts=[], story=None),
+    HuntState(messages=[
+        {"role": "system", "content": "Malware signature match on uploaded file"},
+        {"role": "assistant", "content": "Hash corresponds to known Trojan"}
+    ], evidence={"file_hash": "abcd1234", "file_path": "/tmp/malicious.exe", "signature": "Trojan.Generic"}, alerts=[], story=None),
+]
 
-CASES.append(HuntState(messages=[{"role": "assistant", "content": "Detected persistence via suspicious registry key"}], evidence={}, alerts=[{
-    "evidence": {"host": "workstation-15", "indicator": "Registry persistence", "meta": {"key": "HKCU\\Software\\Microsoft\\Windows\\Run"}}
-}], story=None))
 
-CASES.append(HuntState(messages=[{"role": "system", "content": "Alert: Ransomware behavior on shared drive"}], evidence={}, alerts=[{
-    "evidence": {"host": "fileserver-01", "indicator": "File encryption", "meta": {"extension": ".locked"}}
-}], story=None))
+async def run_pipeline(case: HuntState, case_id: int):
+    print(f"\n=== Running Case {case_id} ===")
+    print("Initial Messages:")
+    for m in case.messages:
+        print(f" - {m['role'].capitalize()}: {m['content']}")
+    print("")
 
-CASES.append(HuntState(messages=[{"role": "user", "content": "Suspicious scheduled task observed"}], evidence={}, alerts=[{
-    "evidence": {"host": "admin-laptop", "indicator": "Scheduled task", "meta": {"task": "\"Updater\" at 3 AM"}}
-}], story=None))
+    # Simulate pipeline with artificial delays
+    steps = [
+        ("collector_node", random.choice(COLLECTOR_OUTCOMES)),
+        ("intel_agent", random.choice(INTEL_OUTCOMES)),
+        ("hypothesis_agent", random.choice(HYPOTHESIS_OUTCOMES)),
+        ("query_builder_agent", random.choice(QUERY_BUILDER_OUTCOMES)),
+        ("detector_node", random.choice(DETECTOR_OUTCOMES)),
+        ("correlator_node", random.choice(CORRELATOR_OUTCOMES)),
+        ("responder_node", random.choice(RESPONDER_OUTCOMES)),
+    ]
 
-CASES.append(HuntState(messages=[{"role": "assistant", "content": "Privilege escalation attempt via token impersonation"}], evidence={}, alerts=[{
-    "evidence": {"host": "domain-controller", "indicator": "Privilege escalation", "meta": {"technique": "Token impersonation"}}
-}], story=None))
+    for step, outcome in steps:
+        await asyncio.sleep(0.6)  # ~streaming effect
+        print(f"[{step}] {outcome}")
+        if "No" in outcome or "Unlikely" in outcome:
+            break  # stop pipeline early if nothing suspicious
 
-# 8 cases without problems
-for i in range(8):
-    CASES.append(HuntState(messages=[
-        {"role": "system", "content": f"Routine scan report {i+1}"},
-        {"role": "assistant", "content": "No suspicious activity detected"},
-        {"role": "user", "content": "All checks clear, system normal."}
-    ], evidence={}, alerts=[], story=None))
+    print(f"=== Final State for Case {case_id}: {step} ===\n")
 
-async def run_case(case: HuntState):
-    print("Running case with initial messages:", case.messages)
-    async for state in hunt_graph.astream(case):
-        print("Step:", state)
-    print("Final state:", state)
 
-async def main():
-    tasks = [run_case(c) for c in CASES]
-    await asyncio.gather(*tasks)
+async def stream_cases():
+    case_id = 1
+    while True:
+        case = random.choice(CASES)
+        await run_pipeline(case, case_id)
+        case_id += 1
+        await asyncio.sleep(1)  # space between pipelines
+
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(stream_cases())
+    except KeyboardInterrupt:
+        print("\nStopped by user.")
