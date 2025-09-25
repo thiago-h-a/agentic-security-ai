@@ -60,6 +60,10 @@ docker-compose up --build
 
 This setup automatically installs dependencies and runs the demo streaming API.
 
-## Note
+## Powerpoint
 
-- Refreshing the browser will reset the demo stream counter to "Case 1".
+Presentation for executive demo propose
+
+[GoogleSlides](https://docs.google.com/presentation/d/1MeTY57LPOk0pVoc1lfS1i1PlFTnqBxyBWP92L059wTw/edit?usp=sharing)
+
+## Thank you!
