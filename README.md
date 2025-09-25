@@ -62,7 +62,7 @@ This setup automatically installs dependencies and runs the demo streaming API.
 
 ## Powerpoint
 
-Presentation for executive demo propose
+Presentation for executive demo purposes
 
 [GoogleSlides](https://docs.google.com/presentation/d/1MeTY57LPOk0pVoc1lfS1i1PlFTnqBxyBWP92L059wTw/edit?usp=sharing)
 
